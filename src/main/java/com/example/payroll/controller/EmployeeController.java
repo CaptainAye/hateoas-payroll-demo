@@ -6,6 +6,7 @@ import com.example.payroll.model.Employee;
 import com.example.payroll.repository.EmployeeRepository;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +42,9 @@ public class EmployeeController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public EntityModel<Employee> createEmployee(@RequestBody Employee employee) {
-        return assembler.toModel(employeeRepository.save(employee));
+    public ResponseEntity<?> createEmployee(@RequestBody Employee employee) {
+        EntityModel<Employee> model = assembler.toModel(employeeRepository.save(employee));
+        return ResponseEntity.created(model.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(model);
     }
 
     @PutMapping("/{id}")
@@ -56,9 +57,10 @@ public class EmployeeController {
                 }
         ).orElseGet(() -> {
             newEmployee.setId(id);
+            EntityModel<Employee> model = assembler.toModel(employeeRepository.save(newEmployee));
             return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(assembler.toModel(employeeRepository.save(newEmployee)));
+                    .created(model.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(model);
         });
     }
 
@@ -69,7 +71,8 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEmployee(@PathVariable Long id) {
+    public ResponseEntity<?> deleteEmployee(@PathVariable Long id) {
         employeeRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

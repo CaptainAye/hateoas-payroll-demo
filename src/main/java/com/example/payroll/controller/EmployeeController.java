@@ -1,6 +1,6 @@
 package com.example.payroll.controller;
 
-import com.example.payroll.controller.exception.EmployeeNotFoundException;
+import com.example.payroll.controller.exception.EntityNotFoundException;
 import com.example.payroll.controller.hateoas.EmployeeModelAssembler;
 import com.example.payroll.model.Employee;
 import com.example.payroll.repository.EmployeeRepository;
@@ -36,7 +36,7 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public EntityModel<Employee> getEmployee(@PathVariable Long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(String.format("Employee with id %d does not exist", id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Employee with id %d does not exist", id)));
         return assembler.toModel(employee);
     }
 

@@ -19,8 +19,8 @@ public class DbInitConfiguration {
     @Bean
     CommandLineRunner dbInit(EmployeeRepository employeeRepository) {
         return args -> {
-            Employee will = new Employee("Will", "Product manager");
-            Employee tom = new Employee("Tom", "Software dev");
+            Employee will = new Employee("Will", "Deng", "Product manager");
+            Employee tom = new Employee("Tom", "Lee", "Software dev");
             List<Employee> employeesToCreate = Arrays.asList(will, tom);
             List<Employee> createdEmployees = employeeRepository.saveAll(employeesToCreate);
             log.info("Created employees: {}", createdEmployees);
